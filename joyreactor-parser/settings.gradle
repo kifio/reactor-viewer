@@ -1,3 +1,2 @@
-enableFeaturePreview('GRADLE_METADATA')
 rootProject.name = 'joyreactor-parser'
 
