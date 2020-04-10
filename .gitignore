@@ -1,0 +1,9 @@
+reactor-parser/*.iml
+reactor-parser/.gradle
+reactor-parser/local.properties
+reactor-parser/idea/
+reactor-parser/.DS_Store
+reactor-parser/build/
+reactor-parser/release/
+reactor-parser/captures/
+reactor-parser/.externalNativeBuild
