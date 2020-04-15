@@ -1,4 +1,4 @@
-package parser
+package reactor
 
 import io.ktor.client.HttpClient
 import io.ktor.client.features.cookies.CookiesStorage
@@ -31,23 +31,23 @@ class Reactor {
 
     private val json: Json = Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true))
 
-    suspend fun getLastPage(tag: String): Pair<Int?, List<Post>>  {
+    suspend fun getLastPage(tag: String, reactorController: ReactorPageHandler) {
         val html = client.get<String>("$BASE_URL/$tag")
-
         val tags = html.split("<span class='current'>")
+
         for (i in 1 until tags.size) {
             val page = tags[i].substring(0, tags[i].indexOf("</span>")).toIntOrNull()
             if (page != null) {
-                return Pair(page, parseHtml(html))
+                reactorController.onPageLoaded(page, parseHtml(html))
+                return
             }
-            println()
         }
-
-        return Pair(0, emptyList())
+        reactorController.onPageLoaded(0, emptyList())
     }
 
-    fun getPage(page: Int): List<Post>{
-        return emptyList()
+    suspend fun getPage(tag: String, page: Int, reactorController: ReactorPageHandler) {
+        val html = client.get<String>("$BASE_URL/$tag/$page")
+        reactorController.onPageLoaded(page, parseHtml(html))
     }
 
     private fun parseHtml(html: String): List<Post> {
@@ -69,7 +69,8 @@ class Reactor {
             }
 
             val url = rawPost.image?.url ?: continue
-            val tags = rawPost.headline.split(TAG_DELIMITER).map { tag -> tag.trim() }.toMutableList()
+            val tags =
+                rawPost.headline.split(TAG_DELIMITER).map { tag -> tag.trim() }.toMutableList()
 
             entities.add(Post(tags, url))
         }
@@ -93,7 +94,7 @@ private data class Image(
 
 data class Post(val tags: MutableList<String>, val url: String)
 
-internal class CustomCookieStorage(private val defaultStorage: CookiesStorage): CookiesStorage {
+internal class CustomCookieStorage(private val defaultStorage: CookiesStorage) : CookiesStorage {
 
     override suspend fun get(requestUrl: Url): List<Cookie> {
         return defaultStorage.get(requestUrl)

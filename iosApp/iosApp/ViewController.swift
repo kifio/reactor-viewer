@@ -1,14 +1,21 @@
 import UIKit
 import app
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, ReactorPageHandler {
+
+    private let reactor = Reactor()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        label.text = Proxy().proxyHello()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
+
+    func onPageLoaded(page: KotlinInt?, posts: [Post]) {
+
+    }
+
     @IBOutlet weak var label: UILabel!
 }

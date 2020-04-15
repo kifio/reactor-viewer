@@ -1,6 +1,6 @@
-package parser
+package reactor
 
-import android.support.v7.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
 import android.widget.TextView
 import io.ktor.client.HttpClient
@@ -20,7 +20,7 @@ internal actual val client = HttpClient(OkHttp) {
     }
 }
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

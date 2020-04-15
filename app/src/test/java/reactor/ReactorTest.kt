@@ -1,5 +1,5 @@
 import kotlinx.coroutines.runBlocking
-import parser.Reactor
+import reactor.Reactor
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="PageEntity" representedClassName="PageEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="page" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="tag" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="PostEntity" representedClassName="PostEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="tags" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="PostEntity" positionX="-63" positionY="-18" width="128" height="73"/>
+        <element name="PageEntity" positionX="-54" positionY="9" width="128" height="73"/>
+    </elements>
+</model>
