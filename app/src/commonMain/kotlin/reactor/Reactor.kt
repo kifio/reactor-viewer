@@ -4,8 +4,12 @@ import io.ktor.client.HttpClient
 import io.ktor.client.features.cookies.CookiesStorage
 import io.ktor.client.request.get
 import io.ktor.http.Cookie
+import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.Url
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -31,23 +35,43 @@ class Reactor {
 
     private val json: Json = Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true))
 
-    suspend fun getLastPage(tag: String, reactorController: ReactorPageHandler) {
-        val html = client.get<String>("$BASE_URL/$tag")
-        val tags = html.split("<span class='current'>")
+    fun getLastPage(tag: String, reactorController: ReactorPageHandler) {
+        GlobalScope.apply {
+            launch(Background) {
+                val html = client.get<String>("$BASE_URL/$tag")
+                val tags = html.split("<span class='current'>")
+                var page: Int? = null
 
-        for (i in 1 until tags.size) {
-            val page = tags[i].substring(0, tags[i].indexOf("</span>")).toIntOrNull()
-            if (page != null) {
-                reactorController.onPageLoaded(page, parseHtml(html))
-                return
+                for (i in 1 until tags.size) {
+                    page = tags[i].substring(0, tags[i].indexOf("</span>")).toIntOrNull()
+                    if (page != null) {
+                        val posts = parseHtml(html)
+                        withContext(Main) {
+                            reactorController.onPageLoaded(tag, page, posts)
+                        }
+                    }
+                }
+
+                if (page == null) {
+                    withContext(Main) {
+                        reactorController.onPageLoaded(tag, 0, emptyList())
+                    }
+                }
             }
         }
-        reactorController.onPageLoaded(0, emptyList())
+
     }
 
-    suspend fun getPage(tag: String, page: Int, reactorController: ReactorPageHandler) {
-        val html = client.get<String>("$BASE_URL/$tag/$page")
-        reactorController.onPageLoaded(page, parseHtml(html))
+    fun getPage(tag: String, page: Int, reactorController: ReactorPageHandler) {
+        GlobalScope.apply {
+            launch(Background) {
+                val html = client.get<String>("$BASE_URL/$tag/$page")
+                val posts = parseHtml(html)
+                withContext(Main) {
+                    reactorController.onPageLoaded(tag, page, posts)
+                }
+            }
+        }
     }
 
     private fun parseHtml(html: String): List<Post> {

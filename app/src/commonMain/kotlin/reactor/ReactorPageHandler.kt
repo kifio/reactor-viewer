@@ -1,5 +1,5 @@
 package reactor
 
 interface ReactorPageHandler {
-    fun onPageLoaded(page: Int?, posts: List<Post>)
+    fun onPageLoaded(tag: String, page: Int?, posts: List<Post>)
 }
