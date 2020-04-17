@@ -25,7 +25,7 @@ class Storage {
 
         // Try to fetch last parsed page from coredata
         var fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "PageEntity")
-        fetchRequest.predicate = NSPredicate(format: "tag == %s", tag)
+        fetchRequest.predicate = NSPredicate(format: "tag == %@", tag)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "page", ascending: false)]
 
         do {
@@ -61,7 +61,7 @@ class Storage {
 
         if let postEntity = NSEntityDescription.entity(forEntityName: "PostEntity", in: context) {
             posts.forEach {
-                fetchRequest.predicate = NSPredicate(format: "url == %s", tag)
+                fetchRequest.predicate = NSPredicate(format: "url == %@", $0.url)
 
                 do {
                     let existedPosts = try self.context.fetch(fetchRequest)
@@ -86,7 +86,7 @@ class Storage {
     /// Fetch posts for tag
     func fetchPosts(tag: String, completion: ([String]) -> Void) {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "PostEntity")
-        fetchRequest.predicate = NSPredicate(format: "tags CONTAINS %s", tag)
+        fetchRequest.predicate = NSPredicate(format: "tags CONTAINS %@", tag)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date_added", ascending: false)]
 
         var urls = [String]()
@@ -108,11 +108,43 @@ class Storage {
 
     /// Save image to CoreData
     func saveImage(url: String, data: Data) {
-        
+        if let imageEntity = NSEntityDescription.entity(forEntityName: "ImageEntity", in: context) {
+            let imageObject = NSManagedObject(entity: imageEntity, insertInto: context)
+
+            imageObject.setValue(url, forKey: "url")
+            imageObject.setValue(data, forKey: "image")
+
+            do {
+                try imageObject.managedObjectContext?.save()
+            } catch {
+                let saveError = error as NSError
+                print(saveError)
+            }
+        }
     }
 
     /// Fetch  image from   CoreData
-    func ауесрImage(url: String, data: Data) {
+    func fetchImage(url: String) -> Data? {
+        do {
 
+            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "ImageEntity")
+            fetchRequest.predicate = NSPredicate(format: "url == %@", url)
+            fetchRequest.fetchLimit = 1
+
+            let result = try self.context.fetch(fetchRequest)
+            if result.isEmpty {
+                return nil
+            } else {
+                if let data = result[0].value(forKey: "image") as? Data {
+                    return data
+                } else {
+                    return nil
+                }
+            }
+        } catch {
+            let saveError = error as NSError
+            print(saveError)
+            return nil
+        }
     }
 }

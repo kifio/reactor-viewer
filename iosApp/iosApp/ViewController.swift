@@ -15,21 +15,16 @@ class ViewController: UIViewController, ReactorPageHandler {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.storage = Storage(context: appDelegate.persistentContainer.viewContext)
         self.searchBar.delegate = self
         self.images.dataSource = self
         self.images.delegate = self
-
-        storage.fetchPosts(tag: "комиксы", completion: {
-            self.posts.append(contentsOf: $0)
-        })
     }
 
     func onPageLoaded(tag: String, page: KotlinInt?, posts: [Post]) {
         if page != nil {
-            let nextPage = self.storage.savePage(page: page as! Int32, tag: tag,posts: posts)
+            let nextPage = self.storage.savePage(page: page as! Int32, tag: tag.lowercased() ,posts: posts)
 
             for post in posts {
                 if !self.posts.contains(where: { url in
@@ -38,10 +33,13 @@ class ViewController: UIViewController, ReactorPageHandler {
                     self.posts.append(post.url)
                 }
             }
-            print("Save page \(page) for tag: \(tag)")
+
             self.images.reloadData()
+
             if nextPage != -1 {
-                self.reactor.getPage(tag: tag, page: nextPage, reactorController: self)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.reactor.getPage(tag: tag, page: nextPage, reactorController: self)
+                }
             }
         }
     }
@@ -52,6 +50,10 @@ extension ViewController : UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let query = searchBar.text {
             reactor.getLastPage(tag: query, reactorController: self)
+            storage.fetchPosts(tag: query.lowercased(), completion: {
+                self.posts.append(contentsOf: $0)
+                self.images.reloadData()
+            })
         }
     }
 }
@@ -72,19 +74,48 @@ extension ViewController : UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = images.dequeueReusableCell(withReuseIdentifier: "imagecell", for: indexPath)
-//        cell.contentView.frame = CGRect(x: 0.0, y: 0.0, width: self.size, height: self.size)
-
         if let imageCell = cell as? ImageCell {
             let url = posts[indexPath.row]
-            imageCell.loadImage(url: url, completion: { [weak self] data in
+            imageCell.url = url
+            self.loadImage(urlString: url, cell: imageCell, completion: { data in
                 if let imageData = data {
-                    self?.storage.saveImage(url: url, data: imageData)
+                    imageCell.setImage(data: imageData)
                 }
             })
         }
-
-        // Configure the cell
         return cell
+    }
+
+    private func loadImage(urlString: String, cell: ImageCell, completion: @escaping (Data?) -> Void) {
+        if let url = URL(string: urlString) {
+            let data = self.storage.fetchImage(url: urlString)
+            DispatchQueue.global(qos: .background).async { [weak self] in
+                do {
+                    if data != nil {
+                        DispatchQueue.main.async {
+                            if url.absoluteString == cell.url {
+                                completion(data)
+                            }
+                        }
+                    } else {
+                        let imageData = try Data(contentsOf: url)
+                        DispatchQueue.main.async {
+                            self?.storage.saveImage(url: urlString, data: imageData)
+                            if url.absoluteString == cell.url {
+                                completion(imageData)
+                            }
+                        }
+                    }
+                } catch {
+                    print("Cannot dowmload image")
+                    DispatchQueue.main.async {
+                        if url.absoluteString == cell.url {
+                            completion(nil)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
