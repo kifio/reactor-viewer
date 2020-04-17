@@ -49,7 +49,7 @@ extension ViewController : UISearchBarDelegate {
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let query = searchBar.text {
-            reactor.getLastPage(tag: query, reactorController: self)
+//            reactor.getLastPage(tag: query, reactorController: self)
             storage.fetchPosts(tag: query.lowercased(), completion: {
                 self.posts.append(contentsOf: $0)
                 self.images.reloadData()
@@ -88,30 +88,30 @@ extension ViewController : UICollectionViewDataSource {
 
     private func loadImage(urlString: String, cell: ImageCell, completion: @escaping (Data?) -> Void) {
         if let url = URL(string: urlString) {
-            let data = self.storage.fetchImage(url: urlString)
             DispatchQueue.global(qos: .background).async { [weak self] in
+                let data = self?.storage.fetchImage(url: urlString)
                 do {
                     if data != nil {
                         DispatchQueue.main.async {
-                            if url.absoluteString == cell.url {
+//                            if url.absoluteString == cell.url {
                                 completion(data)
-                            }
+//                            }
                         }
                     } else {
                         let imageData = try Data(contentsOf: url)
                         DispatchQueue.main.async {
                             self?.storage.saveImage(url: urlString, data: imageData)
-                            if url.absoluteString == cell.url {
+//                            if url.absoluteString == cell.url {
                                 completion(imageData)
-                            }
+//                            }
                         }
                     }
                 } catch {
                     print("Cannot dowmload image")
                     DispatchQueue.main.async {
-                        if url.absoluteString == cell.url {
+//                        if url.absoluteString == cell.url {
                             completion(nil)
-                        }
+//                        }
                     }
                 }
             }

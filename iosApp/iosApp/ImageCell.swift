@@ -16,4 +16,10 @@ class ImageCell: UICollectionViewCell {
     public func setImage(data: Data) {
         self.image.image = UIImage(data: data)
     }
+
+    override func prepareForReuse(){
+        super.prepareForReuse()
+//        self.url = nil
+        self.image.image = nil
+    }
 }

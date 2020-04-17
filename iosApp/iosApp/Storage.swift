@@ -25,7 +25,7 @@ class Storage {
 
         // Try to fetch last parsed page from coredata
         var fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "PageEntity")
-        fetchRequest.predicate = NSPredicate(format: "tag == %@", tag)
+        fetchRequest.predicate = NSPredicate(format: "tag == %@ AND page < \(page)", tag)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "page", ascending: false)]
 
         do {
