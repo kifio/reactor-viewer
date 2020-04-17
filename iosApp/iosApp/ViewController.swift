@@ -5,11 +5,13 @@ class ViewController: UIViewController, ReactorPageHandler {
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var images: UICollectionView!
-    
+
+    private let itemsPerRow: CGFloat = 3
+    private let margin: CGFloat = 8.0
+
     let reactor = Reactor()
     var storage: Storage!
-
-    var posts = [Post]()
+    var posts = [String]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,10 +21,10 @@ class ViewController: UIViewController, ReactorPageHandler {
         self.searchBar.delegate = self
         self.images.dataSource = self
         self.images.delegate = self
-    }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+        storage.fetchPosts(tag: "комиксы", completion: {
+            self.posts.append(contentsOf: $0)
+        })
     }
 
     func onPageLoaded(tag: String, page: KotlinInt?, posts: [Post]) {
@@ -30,13 +32,13 @@ class ViewController: UIViewController, ReactorPageHandler {
             let nextPage = self.storage.savePage(page: page as! Int32, tag: tag,posts: posts)
 
             for post in posts {
-                if !self.posts.contains(where: { p in
-                    p.url == post.url
+                if !self.posts.contains(where: { url in
+                    url == post.url
                 }) {
-                    self.posts.append(post)
+                    self.posts.append(post.url)
                 }
             }
-
+            print("Save page \(page) for tag: \(tag)")
             self.images.reloadData()
             if nextPage != -1 {
                 self.reactor.getPage(tag: tag, page: nextPage, reactorController: self)
@@ -65,17 +67,18 @@ extension ViewController : UICollectionViewDelegate {
 extension ViewController : UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return posts.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = images.dequeueReusableCell(withReuseIdentifier: "imagecell", for: indexPath)
+//        cell.contentView.frame = CGRect(x: 0.0, y: 0.0, width: self.size, height: self.size)
 
         if let imageCell = cell as? ImageCell {
-            let post = posts[indexPath.row]
-            imageCell.loadImage(url: post.url, completion: { [weak self] data in
+            let url = posts[indexPath.row]
+            imageCell.loadImage(url: url, completion: { [weak self] data in
                 if let imageData = data {
-                    self?.storage.saveImage(url: post.url, data: imageData)
+                    self?.storage.saveImage(url: url, data: imageData)
                 }
             })
         }
@@ -85,7 +88,29 @@ extension ViewController : UICollectionViewDataSource {
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return posts.count
+        return 1
+    }
+}
+
+extension ViewController : UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let marginSpace = margin * (itemsPerRow + 1)
+        let contentWidth = self.view.frame.width - marginSpace
+        let size = contentWidth / 3
+        return CGSize(width: size, height: size)
     }
 
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return margin
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: margin, left: margin, bottom: margin, right: margin)
+    }
 }

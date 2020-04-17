@@ -86,7 +86,7 @@ class Storage {
     /// Fetch posts for tag
     func fetchPosts(tag: String, completion: ([String]) -> Void) {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "PostEntity")
-        fetchRequest.predicate = NSPredicate(format: "tag == %s", tag)
+        fetchRequest.predicate = NSPredicate(format: "tags CONTAINS %s", tag)
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date_added", ascending: false)]
 
         var urls = [String]()
