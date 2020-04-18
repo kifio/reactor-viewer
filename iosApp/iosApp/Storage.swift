@@ -67,7 +67,7 @@ class Storage {
                     let existedPosts = try self.context.fetch(fetchRequest)
                     if existedPosts.isEmpty {
                         let postObject = NSManagedObject(entity: postEntity, insertInto: context)
-                        postObject.setValue($0.tags.componentsJoined(by: ","), forKey: "tags")
+                        postObject.setValue($0.tags.componentsJoined(by: ",").lowercased()  , forKey: "tags")
                         postObject.setValue($0.url, forKey: "url")
 
                         try postObject.managedObjectContext?.save()
@@ -93,7 +93,7 @@ class Storage {
 
         do {
             let result = try self.context.fetch(fetchRequest)
-            for managedObject in result {
+                for managedObject in result {
                 if let url = managedObject.value(forKey: "url") as? String {
                     urls.append(url)
                 }

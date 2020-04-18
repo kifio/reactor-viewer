@@ -25,16 +25,15 @@ class ViewController: UIViewController, ReactorPageHandler {
     func onPageLoaded(tag: String, page: KotlinInt?, posts: [Post]) {
         if page != nil {
             let nextPage = self.storage.savePage(page: page as! Int32, tag: tag.lowercased() ,posts: posts)
-
+            var paths = [IndexPath]()
             for post in posts {
-                if !self.posts.contains(where: { url in
-                    url == post.url
-                }) {
+                if !self.posts.contains(post.url) {
                     self.posts.append(post.url)
+                    paths.append(IndexPath(item: self.posts.count - 1, section: 0))
                 }
             }
 
-            self.images.reloadData()
+            self.images.insertItems(at: paths)
 
             if nextPage != -1 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -49,7 +48,7 @@ extension ViewController : UISearchBarDelegate {
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let query = searchBar.text {
-//            reactor.getLastPage(tag: query, reactorController: self)
+            reactor.getLastPage(tag: query, reactorController: self)
             storage.fetchPosts(tag: query.lowercased(), completion: {
                 self.posts.append(contentsOf: $0)
                 self.images.reloadData()
@@ -76,46 +75,37 @@ extension ViewController : UICollectionViewDataSource {
         let cell = images.dequeueReusableCell(withReuseIdentifier: "imagecell", for: indexPath)
         if let imageCell = cell as? ImageCell {
             let url = posts[indexPath.row]
-            imageCell.url = url
-            self.loadImage(urlString: url, cell: imageCell, completion: { data in
-                if let imageData = data {
-                    imageCell.setImage(data: imageData)
-                }
-            })
+            imageCell.setImage(image: nil)
+            self.loadImage(urlString: url, cell: imageCell)
         }
         return cell
     }
 
-    private func loadImage(urlString: String, cell: ImageCell, completion: @escaping (Data?) -> Void) {
-        if let url = URL(string: urlString) {
-            DispatchQueue.global(qos: .background).async { [weak self] in
-                let data = self?.storage.fetchImage(url: urlString)
-                do {
-                    if data != nil {
-                        DispatchQueue.main.async {
-//                            if url.absoluteString == cell.url {
-                                completion(data)
-//                            }
-                        }
-                    } else {
+    private func loadImage(urlString: String, cell: ImageCell) {
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            let data = self?.storage.fetchImage(url: urlString)
+            do {
+                if let imageData = data {
+                    let image = UIImage(data: imageData)
+                    DispatchQueue.main.async {
+                        cell.setImage(image: image)
+                    }
+                } else {
+                    if let url = URL(string: urlString) {
                         let imageData = try Data(contentsOf: url)
+                        let image = UIImage(data: imageData)
                         DispatchQueue.main.async {
                             self?.storage.saveImage(url: urlString, data: imageData)
-//                            if url.absoluteString == cell.url {
-                                completion(imageData)
-//                            }
+                            cell.setImage(image: image)
                         }
                     }
-                } catch {
-                    print("Cannot dowmload image")
-                    DispatchQueue.main.async {
-//                        if url.absoluteString == cell.url {
-                            completion(nil)
-//                        }
-                    }
                 }
+            } catch {
+
+                print("Cannot dowmload image")
             }
         }
+
     }
 
     func numberOfSections(in collectionView: UICollectionView) -> Int {

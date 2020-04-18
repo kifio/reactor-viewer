@@ -13,8 +13,8 @@ class ImageCell: UICollectionViewCell {
 
     var url: String? = nil
 
-    public func setImage(data: Data) {
-        self.image.image = UIImage(data: data)
+    public func setImage(image: UIImage?) {
+        self.image.image = image
     }
 
     override func prepareForReuse(){
