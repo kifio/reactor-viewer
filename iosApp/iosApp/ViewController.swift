@@ -72,44 +72,32 @@ extension ViewController : UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = images.dequeueReusableCell(withReuseIdentifier: "imagecell", for: indexPath)
-        if let imageCell = cell as? ImageCell {
-            let url = posts[indexPath.row]
-            imageCell.setImage(image: nil)
-            self.loadImage(urlString: url, cell: imageCell)
-        }
+        let cell = images.dequeueReusableCell(withReuseIdentifier: "imagecell", for: indexPath) as! ImageCell
+        cell.setImage(image: nil)
+        loadImage(indexPath: indexPath)
         return cell
     }
 
-    private func loadImage(urlString: String, cell: ImageCell) {
-        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            let data = self?.storage.fetchImage(url: urlString)
-            do {
-                if let imageData = data {
-                    let image = UIImage(data: imageData)
+    private func loadImage(indexPath: IndexPath) {
+        let urlString = self.posts[indexPath.row]
+
+        if let data = self.storage.fetchImage(url: urlString) {
+            if let cell = self.images.cellForItem(at: indexPath) as? ImageCell {
+                cell.setImage(image: UIImage(data: data))
+            }
+        } else {
+            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.1, execute: { [weak self] in
+                guard let strongSelf = self else { return }
+                if let url = URL(string: urlString), let imageData = try? Data(contentsOf: url) {
                     DispatchQueue.main.async {
-                        cell.setImage(image: image)
-                    }
-                } else {
-                    if let url = URL(string: urlString) {
-                        let imageData = try Data(contentsOf: url)
-                        let image = UIImage(data: imageData)
-                        DispatchQueue.main.async {
+                        if let cell = strongSelf.images.cellForItem(at: indexPath) as? ImageCell {
                             self?.storage.saveImage(url: urlString, data: imageData)
-                            cell.setImage(image: image)
+                            cell.setImage(image: UIImage(data: imageData))
                         }
                     }
                 }
-            } catch {
-
-                print("Cannot dowmload image")
-            }
+            })
         }
-
-    }
-
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
     }
 }
 

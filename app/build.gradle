@@ -15,7 +15,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId 'org.jetbrains.kotlin.mpp_app_android'
-        minSdkVersion 28
+        minSdkVersion 27
         targetSdkVersion 28
         versionCode 1
         versionName '1.0'
@@ -47,10 +47,10 @@ dependencies {
 }
 
 kotlin {
-    android("android")
+//    android("android")
     // This is for iPhone emulator
     // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
-    iosX64("ios") {
+    iosArm64("ios") {
         binaries {
             framework()
         }
@@ -64,22 +64,22 @@ kotlin {
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
             }
         }
-        androidMain {
-            dependencies {
-                implementation kotlin('stdlib')
-                implementation("io.ktor:ktor-client-okhttp:$ktor_version")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version")
-
-            }
-        }
-        androidTest {
-            dependencies {
-                implementation kotlin('test')
-                implementation kotlin('test-junit')
-                implementation("io.ktor:ktor-client-okhttp:$ktor_version")
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-            }
-        }
+//        androidMain {
+//            dependencies {
+//                implementation kotlin('stdlib')
+//                implementation("io.ktor:ktor-client-okhttp:$ktor_version")
+//                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version")
+//
+//            }
+//        }
+//        androidTest {
+//            dependencies {
+//                implementation kotlin('test')
+//                implementation kotlin('test-junit')
+//                implementation("io.ktor:ktor-client-okhttp:$ktor_version")
+//                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+//            }
+//        }
         iosMain {
             dependencies {
                 implementation("io.ktor:ktor-client-ios:$ktor_version")
