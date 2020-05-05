@@ -105,21 +105,21 @@ extension ViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let marginSpace = margin * (itemsPerRow + 1)
+        let marginSpace = margin * (itemsPerRow)
         let contentWidth = self.view.frame.width - marginSpace
-        let size = contentWidth / 3
+        let size = contentWidth / itemsPerRow
         return CGSize(width: size, height: size)
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return margin
+        return margin / 2
     }
 
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: margin, left: margin, bottom: margin, right: margin)
+        return UIEdgeInsets(top: margin / 2, left: margin / 2, bottom: margin / 2, right: margin / 2)
     }
 }
