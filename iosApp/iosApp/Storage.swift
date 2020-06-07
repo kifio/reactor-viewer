@@ -12,6 +12,7 @@ import app
 class Storage {
 
     private let context: NSManagedObjectContext
+    private let dateFormatter = ISO8601DateFormatter()
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -69,6 +70,8 @@ class Storage {
                         let postObject = NSManagedObject(entity: postEntity, insertInto: context)
                         postObject.setValue($0.tags.componentsJoined(by: ",").lowercased()  , forKey: "tags")
                         postObject.setValue($0.url, forKey: "url")
+                        let date = dateFormatter.date(from: $0.dateModified)
+                        postObject.setValue(date, forKey: "date")
 
                         try postObject.managedObjectContext?.save()
                     }
@@ -87,14 +90,16 @@ class Storage {
     func fetchPosts(tag: String, completion: ([String]) -> Void) {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "PostEntity")
         fetchRequest.predicate = NSPredicate(format: "tags CONTAINS %@", tag)
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date_added", ascending: false)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
 
         var urls = [String]()
 
         do {
             let result = try self.context.fetch(fetchRequest)
                 for managedObject in result {
-                if let url = managedObject.value(forKey: "url") as? String {
+                if let url = managedObject.value(forKey: "url") as? String,
+                    let dateModified = managedObject.value(forKey: "date") as? Date {
+                    print("Append url \(url) with date \(dateModified)")
                     urls.append(url)
                 }
             }
@@ -104,47 +109,5 @@ class Storage {
         }
 
         completion(urls)
-    }
-
-    /// Save image to CoreData
-    func saveImage(url: String, data: Data) {
-        if let imageEntity = NSEntityDescription.entity(forEntityName: "ImageEntity", in: context) {
-            let imageObject = NSManagedObject(entity: imageEntity, insertInto: context)
-
-            imageObject.setValue(url, forKey: "url")
-            imageObject.setValue(data, forKey: "image")
-
-            do {
-                try imageObject.managedObjectContext?.save()
-            } catch {
-                let saveError = error as NSError
-                print(saveError)
-            }
-        }
-    }
-
-    /// Fetch  image from   CoreData
-    func fetchImage(url: String) -> Data? {
-        do {
-
-            let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "ImageEntity")
-            fetchRequest.predicate = NSPredicate(format: "url == %@", url)
-            fetchRequest.fetchLimit = 1
-
-            let result = try self.context.fetch(fetchRequest)
-            if result.isEmpty {
-                return nil
-            } else {
-                if let data = result[0].value(forKey: "image") as? Data {
-                    return data
-                } else {
-                    return nil
-                }
-            }
-        } catch {
-            let saveError = error as NSError
-            print(saveError)
-            return nil
-        }
     }
 }

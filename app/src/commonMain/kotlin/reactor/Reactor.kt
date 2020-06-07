@@ -95,8 +95,9 @@ class Reactor {
             val url = rawPost.image?.url ?: continue
             val tags =
                 rawPost.headline.split(TAG_DELIMITER).map { tag -> tag.trim() }.toMutableList()
+            val dateModified = rawPost.dateModified
 
-            entities.add(Post(tags, url))
+            entities.add(Post(tags, url, dateModified))
         }
 
         return entities
@@ -107,7 +108,8 @@ class Reactor {
 private data class RawPost(
     val type: String,
     var headline: String,
-    val image: Image? = null
+    val image: Image? = null,
+    val dateModified: String
 )
 
 @Serializable
@@ -116,7 +118,7 @@ private data class Image(
     val url: String
 )
 
-data class Post(val tags: MutableList<String>, val url: String)
+data class Post(val tags: MutableList<String>, val url: String, val dateModified: String)
 
 internal class CustomCookieStorage(private val defaultStorage: CookiesStorage) : CookiesStorage {
 

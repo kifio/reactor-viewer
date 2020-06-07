@@ -3,19 +3,29 @@ import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        print("ReactorViewer: didFinishLaunchingWithOptions")
         return true
     }
 
-    func applicationWillResignActive(_ application: UIApplication) {}
+    func applicationWillResignActive(_ application: UIApplication) {
+        print("ReactorViewer: applicationWillResignActive")
+    }
 
-    func applicationDidEnterBackground(_ application: UIApplication) {}
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        print("ReactorViewer: applicationDidEnterBackground")
+    }
 
-    func applicationWillEnterForeground(_ application: UIApplication) {}
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        print("ReactorViewer: applicationWillEnterForeground")
+    }
 
-    func applicationDidBecomeActive(_ application: UIApplication) {}
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        print("ReactorViewer: applicationDidBecomeActive")
+    }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.

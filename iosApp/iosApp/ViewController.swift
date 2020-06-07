@@ -7,11 +7,13 @@ class ViewController: UIViewController, ReactorPageHandler {
     @IBOutlet weak var images: UICollectionView!
 
     private let itemsPerRow: CGFloat = 3
-    private let margin: CGFloat = 8.0
+    private let margin: CGFloat = 4.0
+    private let delay = 0.5
 
     let reactor = Reactor()
     var storage: Storage!
     var posts = [String]()
+    var wasLastPostShown = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,23 +22,26 @@ class ViewController: UIViewController, ReactorPageHandler {
         self.searchBar.delegate = self
         self.images.dataSource = self
         self.images.delegate = self
+
+
+        let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: margin, left: margin, bottom: margin, right: margin)
+        layout.minimumLineSpacing = margin
+        layout.minimumInteritemSpacing = margin
+        self.images.collectionViewLayout = layout
     }
 
     func onPageLoaded(tag: String, page: KotlinInt?, posts: [Post]) {
         if page != nil {
             let nextPage = self.storage.savePage(page: page as! Int32, tag: tag.lowercased() ,posts: posts)
-            var paths = [IndexPath]()
-            for post in posts {
-                if !self.posts.contains(post.url) {
-                    self.posts.append(post.url)
-                    paths.append(IndexPath(item: self.posts.count - 1, section: 0))
-                }
+
+            if wasLastPostShown {
+                refreshCollectionView(tag)
+                wasLastPostShown = false
             }
 
-            self.images.insertItems(at: paths)
-
             if nextPage != -1 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                     self.reactor.getPage(tag: tag, page: nextPage, reactorController: self)
                 }
             }
@@ -48,24 +53,22 @@ extension ViewController : UISearchBarDelegate {
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let query = searchBar.text {
+            searchBar.resignFirstResponder()
             reactor.getLastPage(tag: query, reactorController: self)
-            storage.fetchPosts(tag: query.lowercased(), completion: {
-                self.posts.append(contentsOf: $0)
-                self.images.reloadData()
-            })
+            refreshCollectionView(query)
         }
     }
 }
 
-extension ViewController : UICollectionViewDelegate {
-
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-
-    }
-
-}
-
 extension ViewController : UICollectionViewDataSource {
+
+    func refreshCollectionView(_ query: String) {
+        storage.fetchPosts(tag: query.lowercased(), completion: {
+            self.posts.removeAll()
+            self.posts.append(contentsOf: $0)
+            self.images.reloadData()
+        })
+    }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return posts.count
@@ -73,31 +76,12 @@ extension ViewController : UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = images.dequeueReusableCell(withReuseIdentifier: "imagecell", for: indexPath) as! ImageCell
-        cell.setImage(image: nil)
-        loadImage(indexPath: indexPath)
-        return cell
-    }
-
-    private func loadImage(indexPath: IndexPath) {
-        let urlString = self.posts[indexPath.row]
-
-        if let data = self.storage.fetchImage(url: urlString) {
-            if let cell = self.images.cellForItem(at: indexPath) as? ImageCell {
-                cell.setImage(image: UIImage(data: data))
-            }
-        } else {
-            DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.1, execute: { [weak self] in
-                guard let strongSelf = self else { return }
-                if let url = URL(string: urlString), let imageData = try? Data(contentsOf: url) {
-                    DispatchQueue.main.async {
-                        if let cell = strongSelf.images.cellForItem(at: indexPath) as? ImageCell {
-                            self?.storage.saveImage(url: urlString, data: imageData)
-                            cell.setImage(image: UIImage(data: imageData))
-                        }
-                    }
-                }
-            })
+        if indexPath.row == posts.count - 1 {
+            self.wasLastPostShown = true
         }
+        let urlString = self.posts[indexPath.row]
+        cell.setImage(url: URL(string: urlString))
+        return cell
     }
 }
 
@@ -105,21 +89,8 @@ extension ViewController : UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let marginSpace = margin * (itemsPerRow)
-        let contentWidth = self.view.frame.width - marginSpace
-        let size = contentWidth / itemsPerRow
-        return CGSize(width: size, height: size)
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return margin / 2
-    }
-
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: margin / 2, left: margin / 2, bottom: margin / 2, right: margin / 2)
+        let totalSpacing = (2 * self.margin) + ((self.itemsPerRow - 1) * self.margin)
+        let width = (self.images.bounds.width - totalSpacing) / self.itemsPerRow
+        return CGSize(width: width, height: width)
     }
 }

@@ -6,20 +6,25 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ImageCell: UICollectionViewCell {
 
     @IBOutlet weak var image: UIImageView!
 
-    var url: String? = nil
-
-    public func setImage(image: UIImage?) {
-        self.image.image = image
-    }
-
-    override func prepareForReuse(){
-        super.prepareForReuse()
-//        self.url = nil
-        self.image.image = nil
+    public func setImage(url: URL?) {
+        if url == nil {
+            self.image.image = nil
+        } else {
+            self.image.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "placeholderImage"),
+                options: [
+                    .processor(DownsamplingImageProcessor(size: image.bounds.size)),
+                    .scaleFactor(UIScreen.main.scale),
+                    .transition(.none),
+                    .cacheOriginalImage
+            ])
+        }
     }
 }
