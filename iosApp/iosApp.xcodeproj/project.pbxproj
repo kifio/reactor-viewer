@@ -12,6 +12,8 @@
 		4039286D248D658500E45506 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4039286C248D658500E45506 /* Kingfisher */; };
 		406CB18A2448D84900E6122E /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406CB1892448D84900E6122E /* ImageCell.swift */; };
 		40CFF72A2447ACC90093EF64 /* reactor.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */; };
+		40F9EEDC24A61CC9001B679C /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDB24A61CC9001B679C /* PostCell.swift */; };
+		40F9EEDE24A623AA001B679C /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDD24A623AA001B679C /* PostViewController.swift */; };
 		F861D7E1207FA40F0085E80D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F861D7E0207FA40F0085E80D /* AppDelegate.swift */; };
 		F861D7E3207FA40F0085E80D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F861D7E2207FA40F0085E80D /* ViewController.swift */; };
 		F861D7E6207FA40F0085E80D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F861D7E4207FA40F0085E80D /* Main.storyboard */; };
@@ -56,6 +58,8 @@
 		402E4AE92447B3DE00F62984 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		406CB1892448D84900E6122E /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 		40CFF7292447ACC90093EF64 /* reactor.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = reactor.xcdatamodel; sourceTree = "<group>"; };
+		40F9EEDB24A61CC9001B679C /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
+		40F9EEDD24A623AA001B679C /* PostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
 		F861D7DD207FA40F0085E80D /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F861D7E0207FA40F0085E80D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F861D7E2207FA40F0085E80D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -90,6 +94,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		40F9EED924A61C92001B679C /* Gallery */ = {
+			isa = PBXGroup;
+			children = (
+				F861D7E2207FA40F0085E80D /* ViewController.swift */,
+				406CB1892448D84900E6122E /* ImageCell.swift */,
+			);
+			path = Gallery;
+			sourceTree = "<group>";
+		};
+		40F9EEDA24A61CAB001B679C /* Post */ = {
+			isa = PBXGroup;
+			children = (
+				40F9EEDD24A623AA001B679C /* PostViewController.swift */,
+				40F9EEDB24A61CC9001B679C /* PostCell.swift */,
+			);
+			path = Post;
+			sourceTree = "<group>";
+		};
 		F861D7D4207FA40F0085E80D = {
 			isa = PBXGroup;
 			children = (
@@ -113,10 +135,10 @@
 		F861D7DF207FA40F0085E80D /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				40F9EEDA24A61CAB001B679C /* Post */,
+				40F9EED924A61C92001B679C /* Gallery */,
 				F861D7E0207FA40F0085E80D /* AppDelegate.swift */,
 				40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */,
-				F861D7E2207FA40F0085E80D /* ViewController.swift */,
-				406CB1892448D84900E6122E /* ImageCell.swift */,
 				F861D7E4207FA40F0085E80D /* Main.storyboard */,
 				F861D7E9207FA4100085E80D /* LaunchScreen.storyboard */,
 				F861D7EC207FA4100085E80D /* Info.plist */,
@@ -277,7 +299,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				40F9EEDC24A61CC9001B679C /* PostCell.swift in Sources */,
 				F861D7E3207FA40F0085E80D /* ViewController.swift in Sources */,
+				40F9EEDE24A623AA001B679C /* PostViewController.swift in Sources */,
 				402E4AEA2447B3DE00F62984 /* Storage.swift in Sources */,
 				F861D7E1207FA40F0085E80D /* AppDelegate.swift in Sources */,
 				40CFF72A2447ACC90093EF64 /* reactor.xcdatamodeld in Sources */,

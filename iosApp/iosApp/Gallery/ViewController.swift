@@ -17,6 +17,11 @@ class ViewController: UIViewController, ReactorPageHandler {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        if let navigationController = self.navigationController {
+            navigationController.interactivePopGestureRecognizer?.delegate = self
+            navigationController.setNavigationBarHidden(true, animated: false)
+        }
+
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         self.storage = Storage(context: appDelegate.persistentContainer.viewContext)
         self.searchBar.delegate = self
@@ -83,6 +88,13 @@ extension ViewController : UICollectionViewDataSource {
         cell.setImage(url: URL(string: urlString))
         return cell
     }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "postvc") as! PostViewController
+        vc.urls = [self.posts[indexPath.row]]
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }
 
 extension ViewController : UICollectionViewDelegateFlowLayout {
@@ -92,5 +104,24 @@ extension ViewController : UICollectionViewDelegateFlowLayout {
         let totalSpacing = (2 * self.margin) + ((self.itemsPerRow - 1) * self.margin)
         let width = (self.images.bounds.width - totalSpacing) / self.itemsPerRow
         return CGSize(width: width, height: width)
+    }
+}
+
+extension ViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+
+extension ViewController: UIGestureRecognizerDelegate {
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let navigationController = self.navigationController,
+         gestureRecognizer == navigationController.interactivePopGestureRecognizer else {
+            return true
+        }
+        return navigationController.viewControllers.count > 1
     }
 }
