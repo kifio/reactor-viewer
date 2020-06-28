@@ -11,6 +11,10 @@
 		4039286B248D658500E45506 /* KingfisherStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 4039286A248D658500E45506 /* KingfisherStatic */; };
 		4039286D248D658500E45506 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4039286C248D658500E45506 /* Kingfisher */; };
 		406CB18A2448D84900E6122E /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406CB1892448D84900E6122E /* ImageCell.swift */; };
+		406F920224A894660073A719 /* PostEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F91FE24A894660073A719 /* PostEntity+CoreDataClass.swift */; };
+		406F920324A894660073A719 /* PostEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F91FF24A894660073A719 /* PostEntity+CoreDataProperties.swift */; };
+		406F920424A894660073A719 /* PageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F920024A894660073A719 /* PageEntity+CoreDataClass.swift */; };
+		406F920524A894660073A719 /* PageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F920124A894660073A719 /* PageEntity+CoreDataProperties.swift */; };
 		40CFF72A2447ACC90093EF64 /* reactor.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */; };
 		40F9EEDC24A61CC9001B679C /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDB24A61CC9001B679C /* PostCell.swift */; };
 		40F9EEDE24A623AA001B679C /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDD24A623AA001B679C /* PostViewController.swift */; };
@@ -57,6 +61,10 @@
 /* Begin PBXFileReference section */
 		402E4AE92447B3DE00F62984 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		406CB1892448D84900E6122E /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
+		406F91FE24A894660073A719 /* PostEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		406F91FF24A894660073A719 /* PostEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		406F920024A894660073A719 /* PageEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		406F920124A894660073A719 /* PageEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		40CFF7292447ACC90093EF64 /* reactor.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = reactor.xcdatamodel; sourceTree = "<group>"; };
 		40F9EEDB24A61CC9001B679C /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		40F9EEDD24A623AA001B679C /* PostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
@@ -94,6 +102,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		406F920624A894B60073A719 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				402E4AE92447B3DE00F62984 /* Storage.swift */,
+				40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */,
+				406F91FE24A894660073A719 /* PostEntity+CoreDataClass.swift */,
+				406F91FF24A894660073A719 /* PostEntity+CoreDataProperties.swift */,
+				406F920024A894660073A719 /* PageEntity+CoreDataClass.swift */,
+				406F920124A894660073A719 /* PageEntity+CoreDataProperties.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		40F9EED924A61C92001B679C /* Gallery */ = {
 			isa = PBXGroup;
 			children = (
@@ -135,14 +156,13 @@
 		F861D7DF207FA40F0085E80D /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				406F920624A894B60073A719 /* Model */,
 				40F9EEDA24A61CAB001B679C /* Post */,
 				40F9EED924A61C92001B679C /* Gallery */,
 				F861D7E0207FA40F0085E80D /* AppDelegate.swift */,
-				40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */,
 				F861D7E4207FA40F0085E80D /* Main.storyboard */,
 				F861D7E9207FA4100085E80D /* LaunchScreen.storyboard */,
 				F861D7EC207FA4100085E80D /* Info.plist */,
-				402E4AE92447B3DE00F62984 /* Storage.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -299,11 +319,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				406F920324A894660073A719 /* PostEntity+CoreDataProperties.swift in Sources */,
+				406F920224A894660073A719 /* PostEntity+CoreDataClass.swift in Sources */,
 				40F9EEDC24A61CC9001B679C /* PostCell.swift in Sources */,
 				F861D7E3207FA40F0085E80D /* ViewController.swift in Sources */,
 				40F9EEDE24A623AA001B679C /* PostViewController.swift in Sources */,
 				402E4AEA2447B3DE00F62984 /* Storage.swift in Sources */,
 				F861D7E1207FA40F0085E80D /* AppDelegate.swift in Sources */,
+				406F920424A894660073A719 /* PageEntity+CoreDataClass.swift in Sources */,
+				406F920524A894660073A719 /* PageEntity+CoreDataProperties.swift in Sources */,
 				40CFF72A2447ACC90093EF64 /* reactor.xcdatamodeld in Sources */,
 				406CB18A2448D84900E6122E /* ImageCell.swift in Sources */,
 			);

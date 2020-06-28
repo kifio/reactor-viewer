@@ -37,9 +37,7 @@ class PostCell: UITableViewCell {
 public extension UIImage {
     func resize(targetSize: CGSize, retina: Bool = true) -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(
-            /* size: */ targetSize,
-            /* opaque: */ false,
-                          /* scale: */ 1.0
+            targetSize,false,1.0
         )
         defer { UIGraphicsEndImageContext() }
 
