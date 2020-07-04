@@ -18,6 +18,7 @@
 		407A156724A9D60200139B41 /* PageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A156124A9D60200139B41 /* PageEntity+CoreDataProperties.swift */; };
 		407A156824A9D60200139B41 /* PostEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A156224A9D60200139B41 /* PostEntity+CoreDataClass.swift */; };
 		407A156924A9D60200139B41 /* PostEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A156324A9D60200139B41 /* PostEntity+CoreDataProperties.swift */; };
+		409BE3B224B0CBE200605217 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 409BE3B124B0CBE200605217 /* Assets.xcassets */; };
 		40CFF72A2447ACC90093EF64 /* reactor.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */; };
 		40F9EEDC24A61CC9001B679C /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDB24A61CC9001B679C /* PostCell.swift */; };
 		40F9EEDE24A623AA001B679C /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDD24A623AA001B679C /* PostViewController.swift */; };
@@ -72,6 +73,7 @@
 		407A156124A9D60200139B41 /* PageEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		407A156224A9D60200139B41 /* PostEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		407A156324A9D60200139B41 /* PostEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		409BE3B124B0CBE200605217 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		40CFF7292447ACC90093EF64 /* reactor.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = reactor.xcdatamodel; sourceTree = "<group>"; };
 		40F9EEDB24A61CC9001B679C /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		40F9EEDD24A623AA001B679C /* PostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				F861D7E4207FA40F0085E80D /* Main.storyboard */,
 				F861D7E9207FA4100085E80D /* LaunchScreen.storyboard */,
 				F861D7EC207FA4100085E80D /* Info.plist */,
+				409BE3B124B0CBE200605217 /* Assets.xcassets */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F861D7EB207FA4100085E80D /* LaunchScreen.storyboard in Resources */,
+				409BE3B224B0CBE200605217 /* Assets.xcassets in Resources */,
 				F861D7E6207FA40F0085E80D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -510,7 +514,6 @@
 		F861D7FB207FA4100085E80D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = SU33AJBF5T;
 				ENABLE_BITCODE = NO;
@@ -531,7 +534,6 @@
 		F861D7FC207FA4100085E80D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = SU33AJBF5T;
 				ENABLE_BITCODE = NO;

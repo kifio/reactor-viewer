@@ -1,11 +1,13 @@
 import UIKit
 import app
+import Kingfisher
 
 class ViewController: UIViewController, ReactorPageHandler {
 
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var images: UICollectionView!
 
+    private var imageProcessor: ImageProcessor!
     private let itemsPerRow: CGFloat = 3
     private let margin: CGFloat = 4.0
     private let delay = 0.5
@@ -18,6 +20,7 @@ class ViewController: UIViewController, ReactorPageHandler {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         if let navigationController = self.navigationController {
             navigationController.interactivePopGestureRecognizer?.delegate = self
             navigationController.setNavigationBarHidden(true, animated: false)
@@ -35,10 +38,13 @@ class ViewController: UIViewController, ReactorPageHandler {
         layout.minimumLineSpacing = margin
         layout.minimumInteritemSpacing = margin
         self.images.collectionViewLayout = layout
+        let totalSpacing = (2 * self.margin) + ((self.itemsPerRow - 1) * self.margin)
+        let imageSize = (self.view.bounds.width - totalSpacing) / self.itemsPerRow
+        self.imageProcessor = ResizingImageProcessor(referenceSize: CGSize(width: imageSize, height: imageSize))
     }
 
     func onPageLoaded(tag: String, page: KotlinInt?, posts: [Post]) {
-        if page != nil {
+        if page != nil && tag == currentTag {
             let nextPage = self.storage.savePage(page: page as! Int32, tag: tag.lowercased() ,posts: posts)
 
             if wasLastPostShown {
@@ -47,7 +53,7 @@ class ViewController: UIViewController, ReactorPageHandler {
 
             refreshCollectionView(tag)
 
-            if nextPage != -1 && currentTag == tag {
+            if nextPage != -1 {
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                     self.reactor.getPage(tag: tag, page: nextPage, reactorController: self)
                 }
@@ -81,6 +87,7 @@ extension ViewController : UICollectionViewDataSource {
                 paths.append(IndexPath(row: self.posts.count - 1, section: 0))
             }
 
+            print(self.posts.last?.date)
             self.images?.performBatchUpdates({
                 self.images.insertItems(at: paths)
             }, completion: nil)
@@ -99,7 +106,7 @@ extension ViewController : UICollectionViewDataSource {
 
         let index = indexPath.row
         if let urlString = self.posts[index].url {
-            cell.setImage(url: URL(string: urlString))
+            self.setImage(url: URL(string: urlString), imageView: cell.image)
         }
         return cell
     }
@@ -111,6 +118,21 @@ extension ViewController : UICollectionViewDataSource {
             vc.setup(postId: id, storage: storage)
         }
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+
+    private func setImage(url: URL?, imageView: UIImageView) {
+        if url == nil {
+            imageView.image = nil
+        } else {
+            imageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "placeholderImage"),
+                options: [
+                    .processor(self.imageProcessor),
+                    .transition(.none),
+                    .cacheOriginalImage
+            ])
+        }
     }
 }
 
@@ -131,13 +153,12 @@ extension ViewController: UINavigationControllerDelegate {
 }
 
 // MARK: - UIGestureRecognizerDelegate
-
 extension ViewController: UIGestureRecognizerDelegate {
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         guard let navigationController = self.navigationController,
-         gestureRecognizer == navigationController.interactivePopGestureRecognizer else {
-            return true
+            gestureRecognizer == navigationController.interactivePopGestureRecognizer else {
+                return true
         }
         return navigationController.viewControllers.count > 1
     }

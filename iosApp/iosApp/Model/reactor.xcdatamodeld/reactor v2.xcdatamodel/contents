@@ -23,6 +23,11 @@
     <entity name="PostImageEntity" representedClassName="PostImageEntity" syncable="YES">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="url"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
     </entity>
     <elements>
         <element name="PageEntity" positionX="-54" positionY="9" width="128" height="73"/>

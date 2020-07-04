@@ -21,18 +21,18 @@ class Storage {
 
     /// Save posts, and return index of next page for loading
     func savePage(page: Int32, tag: String, posts: [Post]) -> Int32 {
-        savePosts(posts: posts)
+        savePosts(tag: tag, posts: posts)
         return getNextPageIndex(page: page, tag: tag)
     }
 
     /// Save all new posts, rewrite existed
-    private func savePosts(posts: [Post]) {
+    private func savePosts(tag: String, posts: [Post]) {
         for post in posts {
             let entity = NSEntityDescription.entity(forEntityName: "PostEntity", in: context)!
             let postEntity = PostEntity(entity: entity, insertInto: context)
 
             postEntity.id = post.id
-            postEntity.tags = post.tags.componentsJoined(by: ",").lowercased()
+            postEntity.tags = tag
             postEntity.date = dateFormatter.date(from: post.dateModified)
             postEntity.url = post.url
 
@@ -121,7 +121,6 @@ class Storage {
             let result = try self.context.fetch(fetchRequest)
             for postImageEntity in result {
                 if let url = postImageEntity.url {
-                    print("Append url \(postImageEntity.url) with id \(postImageEntity.id)")
                     urls.append(url)
                 }
             }

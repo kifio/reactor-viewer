@@ -92,26 +92,26 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="808"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleAspectFit" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="postImageCell" rowHeight="450" id="Plv-Xx-tyF" customClass="PostCell" customModule="iosApp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="450"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleAspectFit" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="postImageCell" rowHeight="300" id="Plv-Xx-tyF" customClass="PostCell" customModule="iosApp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="300"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Plv-Xx-tyF" id="810-Vd-O7t">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="450"/>
-                                            <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFill" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Plv-Xx-tyF" translatesAutoresizingMaskIntoConstraints="NO" id="810-Vd-O7t">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="300"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vN1-FM-xTJ">
-                                                    <rect key="frame" x="0.0" y="0.0" width="414" height="450"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6Xu-vS-eF2">
+                                                    <rect key="frame" x="20" y="11" width="0.0" height="0.0"/>
                                                 </imageView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="vN1-FM-xTJ" secondAttribute="trailing" id="9qA-Or-msx"/>
-                                                <constraint firstItem="vN1-FM-xTJ" firstAttribute="top" secondItem="810-Vd-O7t" secondAttribute="top" id="Ayy-cT-VEk"/>
-                                                <constraint firstAttribute="bottom" secondItem="vN1-FM-xTJ" secondAttribute="bottom" id="faZ-E7-GZI"/>
-                                                <constraint firstItem="vN1-FM-xTJ" firstAttribute="leading" secondItem="810-Vd-O7t" secondAttribute="leading" id="iDG-pL-p3r"/>
+                                                <constraint firstItem="6Xu-vS-eF2" firstAttribute="centerX" secondItem="810-Vd-O7t" secondAttribute="centerX" id="1x3-3o-Vc0"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="6Xu-vS-eF2" secondAttribute="trailing" id="21E-NG-5ig"/>
+                                                <constraint firstItem="6Xu-vS-eF2" firstAttribute="centerY" secondItem="810-Vd-O7t" secondAttribute="centerY" id="4HV-zf-OHX"/>
+                                                <constraint firstItem="6Xu-vS-eF2" firstAttribute="leading" secondItem="810-Vd-O7t" secondAttribute="leadingMargin" id="VZE-Mb-GdJ"/>
+                                                <constraint firstItem="6Xu-vS-eF2" firstAttribute="top" secondItem="810-Vd-O7t" secondAttribute="topMargin" id="fq2-ke-fsL"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="postImage" destination="vN1-FM-xTJ" id="twY-Xx-AZs"/>
+                                            <outlet property="postImage" destination="6Xu-vS-eF2" id="NIQ-RG-fdb"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
