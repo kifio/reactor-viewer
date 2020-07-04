@@ -10,9 +10,10 @@ class ViewController: UIViewController, ReactorPageHandler {
     private let margin: CGFloat = 4.0
     private let delay = 0.5
 
+    var currentTag: String? = nil
     let reactor = Reactor()
     var storage: Storage!
-    var posts = [String]()
+    var posts = [PostEntity]()
     var wasLastPostShown = true
 
     override func viewDidLoad() {
@@ -41,11 +42,12 @@ class ViewController: UIViewController, ReactorPageHandler {
             let nextPage = self.storage.savePage(page: page as! Int32, tag: tag.lowercased() ,posts: posts)
 
             if wasLastPostShown {
-                refreshCollectionView(tag)
                 wasLastPostShown = false
             }
 
-            if nextPage != -1 {
+            refreshCollectionView(tag)
+
+            if nextPage != -1 && currentTag == tag {
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                     self.reactor.getPage(tag: tag, page: nextPage, reactorController: self)
                 }
@@ -59,6 +61,9 @@ extension ViewController : UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let query = searchBar.text {
             searchBar.resignFirstResponder()
+            self.posts.removeAll()
+            self.images.reloadData()
+            self.currentTag = query
             reactor.getLastPage(tag: query, reactorController: self)
             refreshCollectionView(query)
         }
@@ -68,10 +73,17 @@ extension ViewController : UISearchBarDelegate {
 extension ViewController : UICollectionViewDataSource {
 
     func refreshCollectionView(_ query: String) {
-        storage.fetchPosts(tag: query.lowercased(), completion: {
-            self.posts.removeAll()
-            self.posts.append(contentsOf: $0)
-            self.images.reloadData()
+        let oldestPostDate = self.posts.isEmpty ? nil : self.posts.last?.date
+        storage.fetchPosts(tag: query.lowercased(), laterThen: oldestPostDate, completion: { posts in
+            var paths = [IndexPath]()
+            for post in posts {
+                self.posts.append(post)
+                paths.append(IndexPath(row: self.posts.count - 1, section: 0))
+            }
+
+            self.images?.performBatchUpdates({
+                self.images.insertItems(at: paths)
+            }, completion: nil)
         })
     }
 
@@ -84,15 +96,20 @@ extension ViewController : UICollectionViewDataSource {
         if indexPath.row == posts.count - 1 {
             self.wasLastPostShown = true
         }
-        let urlString = self.posts[indexPath.row]
-        cell.setImage(url: URL(string: urlString))
+
+        let index = indexPath.row
+        if let urlString = self.posts[index].url {
+            cell.setImage(url: URL(string: urlString))
+        }
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "postvc") as! PostViewController
-        vc.urls = [self.posts[indexPath.row]]
+        if let id = self.posts[indexPath.row].id {
+            vc.setup(postId: id, storage: storage)
+        }
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

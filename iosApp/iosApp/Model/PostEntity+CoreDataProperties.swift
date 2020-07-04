@@ -2,7 +2,7 @@
 //  PostEntity+CoreDataProperties.swift
 //  iosApp
 //
-//  Created by Ivan Murashov on 28.06.20.
+//  Created by Ivan Murashov on 29.06.20.
 //
 //
 
@@ -17,6 +17,7 @@ extension PostEntity {
     }
 
     @NSManaged public var date: Date?
+    @NSManaged public var id: String?
     @NSManaged public var tags: String?
     @NSManaged public var url: String?
 

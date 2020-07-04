@@ -27,18 +27,28 @@ class Storage {
 
     /// Save all new posts, rewrite existed
     private func savePosts(posts: [Post]) {
-        posts.forEach {
-            let postEntity = PostEntity(context: context)
-            postEntity.tags = $0.tags.componentsJoined(by: ",").lowercased()
-            postEntity.url = $0.url
-            postEntity.date = dateFormatter.date(from: $0.dateModified)
-        }
+        for post in posts {
+            let entity = NSEntityDescription.entity(forEntityName: "PostEntity", in: context)!
+            let postEntity = PostEntity(entity: entity, insertInto: context)
 
-        do {
-            try context.save()
-        } catch {
-            let saveError = error as NSError
-            print(saveError)
+            postEntity.id = post.id
+            postEntity.tags = post.tags.componentsJoined(by: ",").lowercased()
+            postEntity.date = dateFormatter.date(from: post.dateModified)
+            postEntity.url = post.url
+
+            for url in post.urls {
+                let entity = NSEntityDescription.entity(forEntityName: "PostImageEntity", in: context)!
+                let postImage = PostImageEntity(entity: entity, insertInto: context)
+                postImage.id = post.id
+                postImage.url = url
+            }
+
+            do {
+                   try context.save()
+               } catch {
+                   let saveError = error as NSError
+                   print(saveError.localizedDescription)
+               }
         }
     }
 
@@ -66,7 +76,8 @@ class Storage {
             } else {
                 // Page not exists.
                 // That's mean we should save this page and fetch next page.
-                let pageEntity = NSEntityDescription.insertNewObject(forEntityName: "PageEntity", into: context) as! PageEntity
+                let entity = NSEntityDescription.entity(forEntityName: "PageEntity", in: context)!
+                let pageEntity = PageEntity(entity: entity, insertInto: context)
                 pageEntity.page = page
                 pageEntity.tag = tag
                 try context.save()
@@ -79,18 +90,38 @@ class Storage {
     }
 
     /// Fetch posts for tag
-    func fetchPosts(tag: String, completion: ([String]) -> Void) {
+    func fetchPosts(tag: String, laterThen: Date?, completion: ([PostEntity]) -> Void) {
         let fetchRequest: NSFetchRequest<PostEntity> = PostEntity.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "tags CONTAINS %@", tag)
+        if let date = laterThen {
+            fetchRequest.predicate = NSPredicate(format: "tags CONTAINS %@ AND date < %@", tag, date as NSDate)
+        } else {
+            fetchRequest.predicate = NSPredicate(format: "tags CONTAINS %@", tag)
+        }
         fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+
+        do {
+            let result = try self.context.fetch(fetchRequest)
+            completion(result)
+        } catch {
+            let saveError = error as NSError
+            print(saveError)
+            completion([PostEntity]())
+        }
+
+    }
+
+    /// Fetch all images from post
+    func fetchImagesUrls(for postId: String, completion: ([String]) -> Void) {
+        let fetchRequest: NSFetchRequest<PostImageEntity> = PostImageEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "id == %@", postId)
 
         var urls = [String]()
 
         do {
             let result = try self.context.fetch(fetchRequest)
-            for postEntity in result {
-                if let url = postEntity.url, let dateModified = postEntity.date {
-                    print("Append url \(url) with date \(dateModified)")
+            for postImageEntity in result {
+                if let url = postImageEntity.url {
+                    print("Append url \(postImageEntity.url) with id \(postImageEntity.id)")
                     urls.append(url)
                 }
             }

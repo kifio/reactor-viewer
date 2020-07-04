@@ -1,15 +1,13 @@
 package reactor
 
+import com.benasher44.uuid.uuid4
 import io.ktor.client.HttpClient
 import io.ktor.client.features.cookies.CookiesStorage
 import io.ktor.client.request.get
+import io.ktor.http.ContentType
 import io.ktor.http.Cookie
-import io.ktor.http.HttpMethod.Companion.Post
 import io.ktor.http.Url
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -23,17 +21,19 @@ internal expect val client: HttpClient
 class Reactor {
 
     companion object {
-        private const val BASE_URL = "http://joyreactor.cc/tag"
-        private const val START_JSON_TAG = "<script type=\"application/ld+json\">"
-        private const val FINISH_JSON_TAG = "</script>"
+        const val BASE_URL = "http://joyreactor.cc/tag"
+        private const val START_JSON_TAG = "<script type=\"application/ld+json\"> "
+        private const val FINISH_JSON_TAG = "} </script>"
         private const val FOO = "@"
         private const val BAR = ""
         private const val BUZ = "\\"
         private const val SLASH = "/"
         private const val TAG_DELIMITER = "::"
-    }
 
-    private val json: Json = Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true))
+        private const val POST_SEPARATOR = "id=\"postContainer"
+        private const val START_PHOTO_TAG = "prettyPhoto\"><img src=\""
+        private const val FINISH_PHOTO_TAG = "\" width=\""
+    }
 
     fun getLastPage(tag: String, reactorController: ReactorPageHandler) {
         GlobalScope.apply {
@@ -48,6 +48,7 @@ class Reactor {
                         val posts = parseHtml(html)
                         withContext(Main) {
                             reactorController.onPageLoaded(tag, page, posts)
+
                         }
                     }
                 }
@@ -59,7 +60,6 @@ class Reactor {
                 }
             }
         }
-
     }
 
     fun getPage(tag: String, page: Int, reactorController: ReactorPageHandler) {
@@ -74,42 +74,87 @@ class Reactor {
         }
     }
 
-    private fun parseHtml(html: String): List<Post> {
-        val posts = html.split(START_JSON_TAG)
+    fun parseHtml(html: String): List<Post> {
+        // Split page by posts
+        val posts = html.split(POST_SEPARATOR)
         val entities = mutableListOf<Post>()
+        val json: Json = Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true, encodeDefaults = false))
 
-        for (i in 1 until posts.size - 1) {
+//        println("parseHtml")
 
-            val jsonString = posts[i].substring(0, posts[i].indexOf(FINISH_JSON_TAG))
-                .replace(FOO, BAR)
-                .replace(BUZ, BAR)
-                .trim()
+        // Skip everything before first post
+        for (i in 1 until posts.size) {
 
-            val rawPost = json.parse(RawPost.serializer(), jsonString).apply {
-                val endOfTrash = headline.indexOf(SLASH)
-                if (endOfTrash != -1) {
-                    headline = headline.substring(endOfTrash + 1)
+            val startIndex = posts[i].indexOf(START_JSON_TAG)
+            val finishIndex = posts[i].indexOf(FINISH_JSON_TAG)
+
+            if (startIndex > 0 && finishIndex > 0) {
+
+                val jsonString = posts[i].substring(
+                    startIndex + START_JSON_TAG.length,
+                    finishIndex + 1
+                ) // finish tag includes closing bracket of json
+                    .trim() // start tag not includes whitespace between tag and json
+                    .replace(FOO, BAR)
+                    .replace(BUZ, BAR)
+
+//                println(jsonString)
+
+                val rawPost = json.parse(RawPost.serializer(), jsonString).apply {
+                    val endOfTrash = headline.indexOf(SLASH)
+                    if (endOfTrash != -1) {
+                        headline = headline.substring(endOfTrash + 1)
+                    }
                 }
+
+                val url = rawPost.image?.url ?: continue
+                val tags =
+                    rawPost.headline.split(TAG_DELIMITER).map { tag -> tag.trim() }.toMutableList()
+                val dateModified = rawPost.dateModified
+
+                entities.add(
+                    Post(
+                        rawPost.mainEntityOfPage?.id ?: uuid4().toString(),
+                        tags,
+                        url,
+                        getPhotoUrls(posts[i]),
+                        dateModified
+                    )
+                )
             }
-
-            val url = rawPost.image?.url ?: continue
-            val tags =
-                rawPost.headline.split(TAG_DELIMITER).map { tag -> tag.trim() }.toMutableList()
-            val dateModified = rawPost.dateModified
-
-            entities.add(Post(tags, url, dateModified))
         }
 
         return entities
+    }
+
+    fun getPhotoUrls(post: String): List<String> {
+        val urls = mutableListOf<String>()
+//        println("getPhotoUrls")
+
+        var from = post.indexOf(START_PHOTO_TAG, 0, true)
+        var to = post.indexOf(FINISH_PHOTO_TAG, from, true)
+
+        while (from != -1) {
+            val url =
+                if (to != -1) post.substring(from + START_PHOTO_TAG.length, to) else post.substring(
+                    from + START_PHOTO_TAG.length
+                )
+//            println(url)
+            urls.add(url)
+            from = post.indexOf(START_PHOTO_TAG, from + START_PHOTO_TAG.length, true)
+            to = post.indexOf(FINISH_PHOTO_TAG, from + START_PHOTO_TAG.length, true)
+        }
+
+        return urls
     }
 }
 
 @Serializable
 private data class RawPost(
-    val type: String,
-    var headline: String,
+    var mainEntityOfPage: Entity? = null,
     val image: Image? = null,
-    val dateModified: String
+    var headline: String = "",
+    val dateModified: String = ""
 )
 
 @Serializable
@@ -118,7 +163,19 @@ private data class Image(
     val url: String
 )
 
-data class Post(val tags: MutableList<String>, val url: String, val dateModified: String)
+@Serializable
+private data class Entity(
+    val id: String,
+    var type: String
+)
+
+data class Post(
+    val id: String,
+    val tags: MutableList<String>,
+    val url: String,
+    val urls: List<String>,
+    val dateModified: String
+)
 
 internal class CustomCookieStorage(private val defaultStorage: CookiesStorage) : CookiesStorage {
 

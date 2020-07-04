@@ -47,9 +47,7 @@ dependencies {
 }
 
 kotlin {
-//    android("android")
-    // This is for iPhone emulator
-    // Switch here to iosArm64 (or iosArm32) to build library for iPhone device
+//     android("android")
     iosArm64("ios") {
         binaries {
             framework()
@@ -62,6 +60,7 @@ kotlin {
                 implementation "io.ktor:ktor-client-core:$ktor_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serialization_version"
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
+                implementation "com.benasher44:uuid:$uuid_version"
             }
         }
 //        androidMain {

@@ -10,11 +10,14 @@
 		402E4AEA2447B3DE00F62984 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402E4AE92447B3DE00F62984 /* Storage.swift */; };
 		4039286B248D658500E45506 /* KingfisherStatic in Frameworks */ = {isa = PBXBuildFile; productRef = 4039286A248D658500E45506 /* KingfisherStatic */; };
 		4039286D248D658500E45506 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 4039286C248D658500E45506 /* Kingfisher */; };
+		404CC90C24A952C400E31976 /* maping_v1_v2.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 404CC90B24A952C400E31976 /* maping_v1_v2.xcmappingmodel */; };
 		406CB18A2448D84900E6122E /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406CB1892448D84900E6122E /* ImageCell.swift */; };
-		406F920224A894660073A719 /* PostEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F91FE24A894660073A719 /* PostEntity+CoreDataClass.swift */; };
-		406F920324A894660073A719 /* PostEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F91FF24A894660073A719 /* PostEntity+CoreDataProperties.swift */; };
-		406F920424A894660073A719 /* PageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F920024A894660073A719 /* PageEntity+CoreDataClass.swift */; };
-		406F920524A894660073A719 /* PageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 406F920124A894660073A719 /* PageEntity+CoreDataProperties.swift */; };
+		407A156424A9D60200139B41 /* PostImageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A155E24A9D60200139B41 /* PostImageEntity+CoreDataClass.swift */; };
+		407A156524A9D60200139B41 /* PostImageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A155F24A9D60200139B41 /* PostImageEntity+CoreDataProperties.swift */; };
+		407A156624A9D60200139B41 /* PageEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A156024A9D60200139B41 /* PageEntity+CoreDataClass.swift */; };
+		407A156724A9D60200139B41 /* PageEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A156124A9D60200139B41 /* PageEntity+CoreDataProperties.swift */; };
+		407A156824A9D60200139B41 /* PostEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A156224A9D60200139B41 /* PostEntity+CoreDataClass.swift */; };
+		407A156924A9D60200139B41 /* PostEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 407A156324A9D60200139B41 /* PostEntity+CoreDataProperties.swift */; };
 		40CFF72A2447ACC90093EF64 /* reactor.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */; };
 		40F9EEDC24A61CC9001B679C /* PostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDB24A61CC9001B679C /* PostCell.swift */; };
 		40F9EEDE24A623AA001B679C /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40F9EEDD24A623AA001B679C /* PostViewController.swift */; };
@@ -60,11 +63,15 @@
 
 /* Begin PBXFileReference section */
 		402E4AE92447B3DE00F62984 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		404CC90B24A952C400E31976 /* maping_v1_v2.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = maping_v1_v2.xcmappingmodel; sourceTree = "<group>"; };
 		406CB1892448D84900E6122E /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
-		406F91FE24A894660073A719 /* PostEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		406F91FF24A894660073A719 /* PostEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		406F920024A894660073A719 /* PageEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		406F920124A894660073A719 /* PageEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		406F920724A8BC860073A719 /* reactor v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "reactor v2.xcdatamodel"; sourceTree = "<group>"; };
+		407A155E24A9D60200139B41 /* PostImageEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostImageEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		407A155F24A9D60200139B41 /* PostImageEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostImageEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		407A156024A9D60200139B41 /* PageEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		407A156124A9D60200139B41 /* PageEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PageEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		407A156224A9D60200139B41 /* PostEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		407A156324A9D60200139B41 /* PostEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PostEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		40CFF7292447ACC90093EF64 /* reactor.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = reactor.xcdatamodel; sourceTree = "<group>"; };
 		40F9EEDB24A61CC9001B679C /* PostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCell.swift; sourceTree = "<group>"; };
 		40F9EEDD24A623AA001B679C /* PostViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
@@ -105,12 +112,15 @@
 		406F920624A894B60073A719 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				407A155E24A9D60200139B41 /* PostImageEntity+CoreDataClass.swift */,
+				407A155F24A9D60200139B41 /* PostImageEntity+CoreDataProperties.swift */,
+				407A156024A9D60200139B41 /* PageEntity+CoreDataClass.swift */,
+				407A156124A9D60200139B41 /* PageEntity+CoreDataProperties.swift */,
+				407A156224A9D60200139B41 /* PostEntity+CoreDataClass.swift */,
+				407A156324A9D60200139B41 /* PostEntity+CoreDataProperties.swift */,
 				402E4AE92447B3DE00F62984 /* Storage.swift */,
 				40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */,
-				406F91FE24A894660073A719 /* PostEntity+CoreDataClass.swift */,
-				406F91FF24A894660073A719 /* PostEntity+CoreDataProperties.swift */,
-				406F920024A894660073A719 /* PageEntity+CoreDataClass.swift */,
-				406F920124A894660073A719 /* PageEntity+CoreDataProperties.swift */,
+				404CC90B24A952C400E31976 /* maping_v1_v2.xcmappingmodel */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -319,17 +329,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				406F920324A894660073A719 /* PostEntity+CoreDataProperties.swift in Sources */,
-				406F920224A894660073A719 /* PostEntity+CoreDataClass.swift in Sources */,
+				407A156924A9D60200139B41 /* PostEntity+CoreDataProperties.swift in Sources */,
+				407A156824A9D60200139B41 /* PostEntity+CoreDataClass.swift in Sources */,
 				40F9EEDC24A61CC9001B679C /* PostCell.swift in Sources */,
+				407A156424A9D60200139B41 /* PostImageEntity+CoreDataClass.swift in Sources */,
+				407A156624A9D60200139B41 /* PageEntity+CoreDataClass.swift in Sources */,
 				F861D7E3207FA40F0085E80D /* ViewController.swift in Sources */,
+				404CC90C24A952C400E31976 /* maping_v1_v2.xcmappingmodel in Sources */,
+				407A156524A9D60200139B41 /* PostImageEntity+CoreDataProperties.swift in Sources */,
 				40F9EEDE24A623AA001B679C /* PostViewController.swift in Sources */,
 				402E4AEA2447B3DE00F62984 /* Storage.swift in Sources */,
 				F861D7E1207FA40F0085E80D /* AppDelegate.swift in Sources */,
-				406F920424A894660073A719 /* PageEntity+CoreDataClass.swift in Sources */,
-				406F920524A894660073A719 /* PageEntity+CoreDataProperties.swift in Sources */,
 				40CFF72A2447ACC90093EF64 /* reactor.xcdatamodeld in Sources */,
 				406CB18A2448D84900E6122E /* ImageCell.swift in Sources */,
+				407A156724A9D60200139B41 /* PageEntity+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -715,9 +728,10 @@
 		40CFF7282447ACC90093EF64 /* reactor.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				406F920724A8BC860073A719 /* reactor v2.xcdatamodel */,
 				40CFF7292447ACC90093EF64 /* reactor.xcdatamodel */,
 			);
-			currentVersion = 40CFF7292447ACC90093EF64 /* reactor.xcdatamodel */;
+			currentVersion = 406F920724A8BC860073A719 /* reactor v2.xcdatamodel */;
 			path = reactor.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

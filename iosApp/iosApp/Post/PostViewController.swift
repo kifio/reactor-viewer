@@ -9,10 +9,17 @@ import UIKit
 
 class PostViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-
     @IBOutlet weak var postImages: UITableView!
 
-    var urls: [String]!
+    private var urls = [String]()
+    private var postId: String!
+    private weak var storage: Storage? = nil
+
+    func setup(postId: String,
+               storage: Storage) {
+        self.postId = postId
+        self.storage = storage
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,19 +27,12 @@ class PostViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.postImages.delegate = self
         self.postImages.rowHeight = UITableViewAutomaticDimension
         self.postImages.estimatedRowHeight = 300
-        // Do any additional setup after loading the view.
+        self.storage?.fetchImagesUrls(for: postId, completion: { images in
+            self.urls.append(contentsOf: images)
+            self.postImages.reloadData()
+            self.storage = nil
+        })
     }
-    
-
-    /*
-     // MARK: - Navigation
-
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return urls.count
