@@ -1,5 +1,5 @@
 import UIKit
-import app
+import common
 import Kingfisher
 
 class ViewController: UIViewController, ReactorPageHandler {

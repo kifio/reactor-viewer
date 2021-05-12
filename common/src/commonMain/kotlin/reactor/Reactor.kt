@@ -4,7 +4,6 @@ import com.benasher44.uuid.uuid4
 import io.ktor.client.HttpClient
 import io.ktor.client.features.cookies.CookiesStorage
 import io.ktor.client.request.get
-import io.ktor.http.ContentType
 import io.ktor.http.Cookie
 import io.ktor.http.Url
 import kotlinx.coroutines.*
@@ -78,7 +77,6 @@ class Reactor {
         // Split page by posts
         val posts = html.split(POST_SEPARATOR)
         val entities = mutableListOf<Post>()
-        val json: Json = Json(JsonConfiguration.Stable.copy(ignoreUnknownKeys = true, encodeDefaults = false))
 
 //        println("parseHtml")
 
@@ -100,7 +98,7 @@ class Reactor {
 
 //                println(jsonString)
 
-                val rawPost = json.parse(RawPost.serializer(), jsonString).apply {
+                val rawPost = Json.decodeFromString(RawPost.serializer(), jsonString).apply {
                     val endOfTrash = headline.indexOf(SLASH)
                     if (endOfTrash != -1) {
                         headline = headline.substring(endOfTrash + 1)

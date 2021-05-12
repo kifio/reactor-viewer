@@ -1,0 +1,60 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform' version "$kotlin_version"
+    id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version"
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://kotlin.bintray.com/kotlinx" }
+}
+
+kotlin {
+    ios {
+        binaries {
+            framework()
+        }
+    }
+
+    jvm("desktop") {
+        withJava()
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+                implementation "io.ktor:ktor-client-core:$ktor_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") {
+                    version { strictly("1.4.3-native-mt") }
+                }
+                implementation "com.benasher44:uuid:$uuid_version"
+            }
+        }
+        iosMain {
+            dependencies {
+                implementation("io.ktor:ktor-client-ios:$ktor_version")
+            }
+        }
+        desktopMain {
+            dependencies {
+                implementation("io.ktor:ktor-client-java:$ktor_version")
+            }
+        }
+    }
+}
+
+task(packForXcode, type: Sync) {
+    group = 'build'
+    def mode = System.getenv('CONFIGURATION') ?: 'DEBUG'
+    def sdkName = System.getenv('SDK_NAME') ?: 'iphonesimulator'
+    def targetName = 'ios' + (sdkName.startsWith('iphoneos') ? 'Arm64' : 'X64')
+    def framework = kotlin.targets[targetName].binaries.getFramework(mode)
+    inputs.property('mode', mode)
+    dependsOn(framework.linkTask)
+    def targetDir = new File(buildDir, 'xcode-frameworks')
+    from({ framework.outputDirectory })
+    into(targetDir)
+}
+
+tasks.getByName('build').dependsOn(packForXcode)

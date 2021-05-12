@@ -1,3 +1,5 @@
 enableFeaturePreview('GRADLE_METADATA')
 rootProject.name = 'reactor-viewer'
-include ':app'
+include ':common'
+include ':desktop'
+
