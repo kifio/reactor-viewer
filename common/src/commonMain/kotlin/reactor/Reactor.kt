@@ -19,7 +19,7 @@ internal expect val client: HttpClient
 class Reactor {
 
     companion object {
-        const val BASE_URL = "http://joyreactor.cc/tag"
+        private const val BASE_URL = "http://joyreactor.cc/tag"
         private const val START_JSON_TAG = "<script type=\"application/ld+json\"> "
         private const val FINISH_JSON_TAG = "} </script>"
         private const val FOO = "@"
@@ -27,10 +27,11 @@ class Reactor {
         private const val BUZ = "\\"
         private const val SLASH = "/"
         private const val TAG_DELIMITER = "::"
-
         private const val POST_SEPARATOR = "id=\"postContainer"
         private const val START_PHOTO_TAG = "prettyPhoto\"><img src=\""
         private const val FINISH_PHOTO_TAG = "\" width=\""
+
+        private const val DELAY = 1000L
     }
 
     private val backgroundScope = CoroutineScope(Background)
@@ -47,7 +48,7 @@ class Reactor {
                 if (page != null) {
                     val posts = parseHtml(html)
                     withContext(Main) {
-                        delay(500L)
+                        delay(DELAY)
                         reactorController.onPageLoaded(tag, page, posts)
                     }
                 }
@@ -66,7 +67,7 @@ class Reactor {
             val html = client.get<String>("$BASE_URL/$tag/$page")
             val posts = parseHtml(html)
             withContext(Main) {
-                delay(500L)
+                delay(DELAY)
                 reactorController.onPageLoaded(tag, page, posts)
             }
         }

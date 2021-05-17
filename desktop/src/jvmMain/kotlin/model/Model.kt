@@ -1,19 +1,28 @@
 package model
 
-import java.io.FileOutputStream
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.awt.image.BufferedImage
+import java.io.File
 import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
+import javax.imageio.ImageIO
 
 
 class  Model {
 
     private val path = Paths.get(".out")
+    private val client: OkHttpClient
 
-    init { setupCache() }
+    init {
+        setupCache()
+        client = OkHttpClient().newBuilder()
+            .followRedirects(false)
+            .followSslRedirects(false)
+            .build();
+    }
 
     private fun setupCache(): Boolean {
         return try {
@@ -27,21 +36,37 @@ class  Model {
         }
     }
 
-    fun downloadImage(url: String, filename: String) {
+    fun downloadImage(url: String, filename: String, tag: String,  onImageSaved: (BufferedImage) -> Unit) {
+        val dst = resolvePath(filename, tag)
 
-//        val urlInputStream: InputStream = URL(url).openStream()
-//        val fileOutputStream = FileOutputStream(path.resolve(filename).toFile())
+        if (Files.exists(dst)) {
+            return
+        }
 
-        val conn: HttpURLConnection = URL(url.replace("/post", "/post/full")).openConnection() as HttpURLConnection
-        conn.instanceFollowRedirects = false
+        val request: Request = Request.Builder()
+            .url(url)
+            .build()
 
-        conn.inputStream.use { stream -> Files.copy(stream, path.resolve(filename)) }
+        client.newCall(request).execute().use { response ->
+            response.body?.byteStream()?.let { stream ->
+                Files.copy(stream, dst)
+                getBufferedImage(dst)?.let(onImageSaved)
+            }
+        }
     }
 
-    private fun redirectedUrl(url: String): String {
+    private fun resolvePath(filename: String, tag: String): Path {
+        val dir = Files.createDirectories(path.resolve(tag))
+        return dir.resolve(filename)
+    }
 
-//        println(con.responseMessage)
-//        val redirectedUrl = con.getHeaderField("Location").toString()
-        return url
+    private fun getBufferedImage(path: Path): BufferedImage? {
+        var img: BufferedImage? = null
+        try {
+            img = ImageIO.read(path.toFile())
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return img
     }
 }

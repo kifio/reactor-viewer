@@ -9,6 +9,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.swing.*
 
+// TODO: добавить пространсов между строками
 class View {
 
     companion object {
@@ -33,7 +34,6 @@ class View {
         }.setupContent()
 
         invokeWithDelay({ presenter?.setupCellSize(galleryList.width / 3) }, SETUP_DELAY)
-        presenter?.makeSearch("")
     }
 
     private fun JFrame.setupContent() = GridBagConstraints().apply {
@@ -50,13 +50,19 @@ class View {
             gridy = 0
         })
 
-    private fun JFrame.addSearchButton(constraints: GridBagConstraints) = add(searchButton, constraints.apply {
+    private fun JFrame.addSearchButton(constraints: GridBagConstraints) {
+        searchButton.addActionListener {
+            presenter?.makeSearch(searchField.text)
+        }
+
+        this.add(searchButton, constraints.apply {
             weightx = 1.0
             weighty = 0.0
             fill = GridBagConstraints.HORIZONTAL
             gridx = 4
             gridy = 0
         })
+    }
 
     private fun JFrame.addGrid(constraints: GridBagConstraints) {
         galleryList.selectionMode = ListSelectionModel.SINGLE_INTERVAL_SELECTION;
@@ -77,8 +83,8 @@ class View {
         })
     }
 
-    fun update(newImages: List<BufferedImage>) {
-        (galleryList.model as DefaultListModel<BufferedImage>).addAll(newImages)
+    fun update(image: BufferedImage) {
+        (galleryList.model as DefaultListModel<BufferedImage>).addElement(image)
     }
 
     fun setupCellSize(cellSize: Int) {

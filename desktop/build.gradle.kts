@@ -18,7 +18,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(project(":common"))
-                implementation( "com.soywiz.korlibs.korim:korim:2.0.9")
+                implementation("com.squareup.okhttp3:okhttp:4.9.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core") {
                     version { strictly("1.5.0-RC") }
                 }
