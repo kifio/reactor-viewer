@@ -9,11 +9,10 @@ import io.ktor.http.Url
 import kotlinx.coroutines.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 
 internal expect val Main: CoroutineDispatcher
 
-internal expect val Background: CoroutineDispatcher
+expect val Background: CoroutineDispatcher
 
 internal expect val client: HttpClient
 
@@ -34,46 +33,48 @@ class Reactor {
         private const val FINISH_PHOTO_TAG = "\" width=\""
     }
 
+    private val backgroundScope = CoroutineScope(Background)
+    private val format = Json { ignoreUnknownKeys = true; encodeDefaults = false }
+
     fun getLastPage(tag: String, reactorController: ReactorPageHandler) {
-        GlobalScope.apply {
-            launch(Background) {
-                val html = client.get<String>("$BASE_URL/$tag")
-                val tags = html.split("<span class='current'>")
-                var page: Int? = null
+        backgroundScope.launch(Background) {
+            val html = client.get<String>("$BASE_URL/$tag")
+            val tags = html.split("<span class='current'>")
+            var page: Int? = null
 
-                for (i in 1 until tags.size) {
-                    page = tags[i].substring(0, tags[i].indexOf("</span>")).toIntOrNull()
-                    if (page != null) {
-                        val posts = parseHtml(html)
-                        withContext(Main) {
-                            reactorController.onPageLoaded(tag, page, posts)
-
-                        }
+            for (i in 1 until tags.size) {
+                page = tags[i].substring(0, tags[i].indexOf("</span>")).toIntOrNull()
+                if (page != null) {
+                    val posts = parseHtml(html)
+                    withContext(Main) {
+                        delay(500L)
+                        reactorController.onPageLoaded(tag, page, posts)
                     }
                 }
+            }
 
-                if (page == null) {
-                    withContext(Main) {
-                        reactorController.onPageLoaded(tag, 0, emptyList())
-                    }
+            if (page == null) {
+                withContext(Main) {
+                    reactorController.onPageLoaded(tag, 0, emptyList())
                 }
             }
         }
     }
 
     fun getPage(tag: String, page: Int, reactorController: ReactorPageHandler) {
-        GlobalScope.apply {
-            launch(Background) {
-                val html = client.get<String>("$BASE_URL/$tag/$page")
-                val posts = parseHtml(html)
-                withContext(Main) {
-                    reactorController.onPageLoaded(tag, page, posts)
-                }
+        backgroundScope.launch(Background) {
+            val html = client.get<String>("$BASE_URL/$tag/$page")
+            val posts = parseHtml(html)
+            withContext(Main) {
+                delay(500L)
+                reactorController.onPageLoaded(tag, page, posts)
             }
         }
     }
 
-    fun parseHtml(html: String): List<Post> {
+    fun dispose() = backgroundScope.cancel()
+
+    private fun parseHtml(html: String): List<Post> {
         // Split page by posts
         val posts = html.split(POST_SEPARATOR)
         val entities = mutableListOf<Post>()
@@ -98,7 +99,7 @@ class Reactor {
 
 //                println(jsonString)
 
-                val rawPost = Json.decodeFromString(RawPost.serializer(), jsonString).apply {
+                val rawPost = format.decodeFromString(RawPost.serializer(), jsonString).apply {
                     val endOfTrash = headline.indexOf(SLASH)
                     if (endOfTrash != -1) {
                         headline = headline.substring(endOfTrash + 1)
@@ -125,7 +126,7 @@ class Reactor {
         return entities
     }
 
-    fun getPhotoUrls(post: String): List<String> {
+    private fun getPhotoUrls(post: String): List<String> {
         val urls = mutableListOf<String>()
 //        println("getPhotoUrls")
 

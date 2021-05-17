@@ -33,6 +33,7 @@ class View {
         }.setupContent()
 
         invokeWithDelay({ presenter?.setupCellSize(galleryList.width / 3) }, SETUP_DELAY)
+        presenter?.makeSearch("")
     }
 
     private fun JFrame.setupContent() = GridBagConstraints().apply {
@@ -76,7 +77,7 @@ class View {
         })
     }
 
-    private fun updateModel(newImages: List<BufferedImage>) {
+    fun update(newImages: List<BufferedImage>) {
         (galleryList.model as DefaultListModel<BufferedImage>).addAll(newImages)
     }
 

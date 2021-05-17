@@ -13,7 +13,7 @@ import kotlin.coroutines.CoroutineContext
 
 internal actual val Main: CoroutineDispatcher = NsQueueDispatcher(dispatch_get_main_queue())
 
-internal actual val Background: CoroutineDispatcher = Main
+actual val Background: CoroutineDispatcher = Main
 
 internal actual val client = HttpClient(Ios) {
     install(HttpCookies) {
