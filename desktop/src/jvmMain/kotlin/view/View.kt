@@ -1,15 +1,16 @@
 package view
 
 import presenter.Presenter
-import java.awt.Component
-import java.awt.GridBagConstraints
-import java.awt.GridBagLayout
+import java.awt.*
+import java.awt.event.MouseAdapter
+import java.awt.event.MouseEvent
 import java.awt.image.BufferedImage
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import javax.swing.*
+import javax.swing.border.EmptyBorder
 
-// TODO: добавить пространсов между строками
+
 class View {
 
     companion object {
@@ -22,8 +23,10 @@ class View {
     private val searchButton = JButton("Search")
     private var galleryList = JList(DefaultListModel<BufferedImage>())
 
+    private lateinit var root: JFrame
+
     fun setup() {
-        JFrame("Hello Swing").apply {
+        root = JFrame("Hello Swing").apply {
             layout = GridBagLayout()
 
             defaultCloseOperation = JFrame.EXIT_ON_CLOSE
@@ -31,7 +34,9 @@ class View {
 
             isResizable = false
             isVisible = true
-        }.setupContent()
+        }
+
+        root.setupContent()
 
         invokeWithDelay({ presenter?.setupCellSize(galleryList.width / 3) }, SETUP_DELAY)
     }
@@ -69,6 +74,15 @@ class View {
         galleryList.layoutOrientation = JList.HORIZONTAL_WRAP;
         galleryList.visibleRowCount = -1;
         galleryList.cellRenderer = ImageRenderer()
+        galleryList.border = EmptyBorder(4, 0, 0, 0)
+        galleryList.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                presenter?.handleListItemClick(
+                    (galleryList.model as DefaultListModel<BufferedImage>)
+                    .getElementAt(galleryList.locationToIndex(e.point))
+                )
+            }
+        })
 
         add(JScrollPane(galleryList).apply {
             verticalScrollBarPolicy = JScrollPane.VERTICAL_SCROLLBAR_NEVER
@@ -87,6 +101,10 @@ class View {
         (galleryList.model as DefaultListModel<BufferedImage>).addElement(image)
     }
 
+    fun clear() {
+        (galleryList.model as DefaultListModel<BufferedImage>).clear()
+    }
+
     fun setupCellSize(cellSize: Int) {
         galleryList.fixedCellWidth = cellSize
         galleryList.fixedCellHeight = cellSize
@@ -98,6 +116,19 @@ class View {
             SwingUtilities.invokeLater(runnable)
             null
         }, delay, TimeUnit.MILLISECONDS)
+    }
+
+    fun showImageInDialog(image: BufferedImage) {
+        val frame = JDialog(root, null, true)
+        frame.contentPane.add(object : JPanel() {
+            override fun paint(g: Graphics) {
+                super.paint(g)
+                g.drawImage(image, 0, 0, null);
+            }
+        })
+        frame.setSize(image.width, image.height)
+        frame.isResizable = false
+        frame.isVisible = true
     }
 }
 

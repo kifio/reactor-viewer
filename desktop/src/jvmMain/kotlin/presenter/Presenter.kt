@@ -2,7 +2,7 @@ package presenter
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import model.Model
 import reactor.Post
@@ -10,20 +10,19 @@ import reactor.Reactor
 import reactor.ReactorPageHandler
 import view.View
 import java.awt.image.BufferedImage
-import java.io.InputStream
-import javax.imageio.ImageIO
 
-// TODO: добавить работу с кэшом: по умолчанию рисовать закэшированнеы картинки
-// TODO: добавить открытие полной картинки в отдельном окне по клику
+
 class Presenter(private var view: View?) : ReactorPageHandler {
 
     private var imageSize = 0
     private val reactor = Reactor()
     private val imageLoadingScope = CoroutineScope(Dispatchers.IO)
+    private val cacheScope = CoroutineScope(Dispatchers.IO)
     private val model = Model()
+    private var currentTag: String? = null
 
     override fun onPageLoaded(tag: String, page: Int?, posts: List<Post>) {
-        println("load page: $page in tag: $tag")
+        if (currentTag != tag) { return }
         if (page != null) loadNextPage(tag, page)
         for (post in posts) {
             imageLoadingScope.launch {
@@ -42,7 +41,24 @@ class Presenter(private var view: View?) : ReactorPageHandler {
         view?.setupCellSize(size)
     }
 
-    fun makeSearch(query: String) = reactor.getLastPage(query, this)
+    fun makeSearch(query: String) {
+        currentTag = query
+        view?.clear()
+        reactor.getLastPage(query, this)
+        cacheScope.launch {
+            model.loadCachedImages(query) { image ->
+                view?.update(image)
+            }
+        }
+    }
 
-    private fun loadNextPage(query: String, page: Int) = reactor.getPage(query, page - 1, this)
+    fun handleListItemClick(image: BufferedImage) {
+        view?.showImageInDialog(image)
+    }
+
+    private fun loadNextPage(query: String, page: Int) {
+        if (page > 0) {
+            reactor.getPage(query, page - 1, this)
+        }
+    }
 }
